@@ -1,0 +1,555 @@
+% !Mode:: "TeX:UTF-8"
+% !TEX program  = xelatex
+
+%\documentclass{cumcmthesis}
+\documentclass[withoutpreface,bwprint]{cumcmthesis} % 去掉封面与编号页
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{url}   % 网页链接
+\usepackage{subcaption} % 子标题
+
+\title{2020浙江工业大学数学建模校赛\\新冠病毒传播问题}
+\tihao{B}
+\yearinput{2020}
+\monthinput{05}
+\dayinput{24}
+
+\begin{document}
+
+ \maketitle
+
+
+%目录  2019 明确不要目录，我觉得这个规定太好了
+%\tableofcontents
+
+%\newpage
+\begin{abstract}
+新冠病毒拥有传染性强，容易引发多种并发症致死等生理学特征。本文从研究传染病传播的一般模型SIR 模型出发，先从表征传染病的基本参数感染率，死亡率，治愈率对新冠疫情走势进行简单分析。随后考虑病情的严重程度、无症状感染者等自然因素。下一步根据中国政府所采取的应对措施作为人为因素的参考进一步拓展模型。
+\keywords{新冠肺炎\quad SIR模型}
+\end{abstract}
+
+\section{问题重述}
+
+2019 年底，新型冠状病毒（SARS-CoV-2）来袭，给全球人民的
+生命财产安全带来重大影响。 截止 5 月 12 日，全球累计确诊人数接
+近 417 万人。其中，我国累计确实确诊人数超过 8 万 4 千余人。面对
+疫情，党中央果断地采取武汉封城、适当延长春节假期、 调整学校开
+学时间等措施，对于控制国内疫情发展起到了至关重要的作用。
+几个月内，科研工作者对病毒致病机理、快速检测技术、药物设
+计与开发、流行病传播模型等开展了大量的研究。 请数学建模团队充
+分查找政府措施、疫情发展数据等资料，完成以下几项任务：
+    \begin{enumerate}
+        \item 分析病毒传播规律，建立传染病传播数学模型；
+        \item 利用附件提供的全国疫情数据，计算病毒传播速率、疫情峰值时间，预测疫情结束时间，并设计方法验证模型的有效性；
+        \item 通过第二问的数据， 选取评价指标， 构建评估全国疫情发展的动态评价体系；
+        \item 建立数学模型， 结合数据定量分析政府政策对于控制疫情发展的效果。
+        \item 选取某个侧面，建立数学模型，分析疫情对于我国的影响。
+    \end{enumerate}
+注：本题数据来自于丁香医生微信公众号、新浪微博。若数据有出入，以国家及省市地区卫健委公布的数据为准。 若数据缺失可以自行查找
+或者涉及方法补全。
+\section{问题分析}
+客观上，每一各人必然处于患病或没有患病的状态。依此作为切入点，可以对人群按照客观状态进行分类。未患病的人有一定可能感染病毒，由此可以将不同人群之间的数量转换定量表达。
+对于病毒本身对人的影响可以作为划定人群的分类标准。人类在防=防治传染病的过程中的认为举措为划分体哦那个了另一个标准。介于以上主客观两方面因素可以建立病情的发展阶段模型。再通过微分方程的形式分析数量转换的函数关系并求解。
+\section{模型一：将新冠视为简单传染病的SIR模型}
+\subsection{模型假设}
+\begin{enumerate}
+    \item 病毒从自然界进化而来并通过某种渠道传递给人类。“零号感染者“从健康人转化而来。
+    \item 考察的社群没有人口迁入迁出。总人数不变化。
+    \item 易感人群与发病患者有效接触便会立即感染。
+    \item 感染者在发病到治疗的所有阶段都不会被隔离。接触的人数也不会变化。
+    \item 被治愈患者拥有类似抗体的防御机制，将不会再次感染但有可能感染其他人。\cite{ref1}
+    \item 死亡人群的尸体得到妥善处理，不会传播病毒。死亡人群没有感染性
+    \item 病毒不发生改变性质的变异。不考虑人因感染率和治愈率不会有明显变化。
+\end{enumerate}
+\subsection{符号说明}
+   \begin{table}[!htbp]
+   \label{tab:001} \centering
+    \begin{tabular}{ccccc}
+        \toprule[1.5pt]
+        符号 & 说明 \\
+        \midrule[1pt]
+         N& 考察的社群的总人口。\\
+         s& 易感人群占总人口的比例，关于时间t的函数。\\
+         r& 治愈患者占总人口的比例，关于时间t的函数。\\
+         $\lambda$ & 每个患者每天有效接触的人数。亦称感染率。\\
+         $\mu$ & 感染患者每天的治愈/死亡的人数比例。亦称移除率。\\
+        \bottomrule[1.5pt]
+    \end{tabular}
+\end{table}
+
+\subsection{模型建立}
+我们将所考察的社群分为易感人群（健康人），感染人群，治愈/死亡人群。时刻t时显然有：
+    \begin{equation}\label{qua:001}
+      s(t)+i(t)+r(t)=1
+    \end{equation}
+对于疾病的发展过程有以下阶段
+
+    \begin{figure}[!h]
+        \centering
+        \includegraphics[width=.6\textwidth]{model1_flow}
+        \caption{疫情的发展阶段}
+        \label{fig:model1_flow}
+    \end{figure}
+考虑健康到发病的传染阶段。每个患者发病期间每天感染的人数\textit{$\lambda s(t)$}。患者的数量是\textit{$Ni(t)$}。所以社群每天感染的总人数为\textit{$Nλs(t)i(t)$}。
+每天的社群的感染增长率为
+    \begin{equation}\label{qua:002}
+      \frac{Ndi}{dt}=N\lambda si
+    \end{equation}
+考虑发病到治愈的阶段
+每天被治愈/死亡的人数为\textit{$Ni(t)$}$\mu$。将治愈/死亡数加入（2）式。并化简。
+    \begin{equation}\label{qua:003}
+      \frac{di}{dt}=(\lambda s-\mu )i
+    \end{equation}
+接着我们考虑易感人群的数量变化，很明显在我们的假设中人数会单调减少。
+同理治愈/死亡人群会单调增加。我们可以得出:
+    \begin{equation}\label{qua:004}
+      \frac{ds}{dt}=-\lambda si
+    \end{equation}
+    \begin{equation}\label{qua:005}
+      \frac{dr}{dt}=\mu i
+    \end{equation}
+结合（3）（4）（5）式得到描述疫情发展的一组微分方程。
+\subsection{结果的分析}
+这里不求解模型一。只通过模型一对传染病模型进行定性。
+通过回顾简单的传染病SIR模型，我们得到了一组描述传染病防治过程中的重要参数\textbf{传染率λ，治愈（移除）率μ}。
+明确了防治工作在数学模型中的表示，即促使i降为0。
+
+采取的措施可以分为降低λ或者提升μ，或者降低s （0）。
+但截至目前没有任何疫苗通过检测。所以不考虑降低s(0)的方法。
+
+在上述阐释的基础上，我们还应当降低死亡率。显然这是从人性出发的目标。
+
+\section{对新型冠状病毒特点和实际措施分析}
+\subsection{潜伏期}
+新冠病毒感染到发病有2-14天的潜伏期，多为3-7天\cite{ref2}。 我们首先要在疾病的自然发展状态引入潜伏阶段。
+    \begin{figure}[!h]
+        \centering
+        \includegraphics[width=.6\textwidth]{ana1_flow}
+        \caption{疫情的发展阶段（引入潜伏期）}
+        \label{fig:ana1_flow}
+    \end{figure}
+
+\subsection{病情严重程度}
+根据诊疗方案，发病患者依照严重程度分为轻型，普通型，重型和危重型。其中重型和为危重型需要的资源与轻型和普通型绝对的差距。我们将重型和危重型分为一类状态而轻型和重型分为一类。
+    \begin{figure}[!h]
+        \centering
+        \includegraphics[width=.6\textwidth]{ana2_flow}
+        \caption{疫情的发展阶段（引入严重程度）}
+        \label{fig:ana2_flow}
+    \end{figure}
+
+\subsection{无症状感染者}
+大众普遍认识的无症状感染者细分为两类，一类是是尚在潜伏期没有发病的。另一类是医学概念上的从感染到治愈都完全没有任何症状的感染者。此处将专指后者。
+
+无症状感染者在第六版诊疗方案中被讨论，属于在疫情趋势整体舒缓减弱之后才起显著作用的因素。介于此状态影响的时间较短没有充分的数据支持，这里只提出此种状态但不在模型求解过程中考虑。
+    \begin{figure}[!h]
+        \centering
+        \includegraphics[width=.6\textwidth]{ana3_flow}
+        \caption{疫情的发展阶段（引入无症状感染者）}
+        \label{fig:ana3_flow}
+    \end{figure}
+无症状感染者也具有传染性。
+
+\section{模型二：引入更多自然因素的简单新冠SIR模型}
+\subsection{模型假设}
+在模型一的基础上
+    \begin{enumerate}
+        \item 确诊病例不再具有传染性
+        \item 从潜伏期到重症患者必须经过轻症阶段。
+        \item 重症/危重与轻症/普通的治愈/死亡率相同。
+    \end{enumerate}
+\newpage
+\subsection{符号说明}
+在模型一的基础上
+    \begin{table}[!htbp]
+       \label{tab:002}
+       \centering
+        \begin{tabular}{ccccc}
+            \toprule[1.5pt]
+            符号 & 说明 \\
+            \midrule[1pt]
+             i& 转变成表示所有发病人数（任何病情严重程度）占总人口的比例，
+
+                仍是关于t的函数。\\
+             \\
+             m& 轻症/普通患者占总人数的比例，关于t的函数。\\
+             h& 重症/危重症患者占总人口的比例，关于t的函数。\\
+             $\alpha $ & 表示重症/危重症患者占患病者的比例，亦称重症比例。\\
+             $\beta $ & 表示每个人每天从潜伏期转变为轻症的概率。\\
+             $\gamma $ & 表示轻症/普通转移为重症/危重症的概率。亦称重症率。\\
+            \bottomrule[1.5pt]
+        \end{tabular}
+    \end{table}
+
+\subsection{模型建立}
+我们现在有：
+    \begin{equation}\label{qua:006}
+        s\left(t\right)+l\left(t\right)+i(t)+r(t)=1
+    \end{equation}
+重新考察健康人群，感染者被替换为潜伏期。我们对参数稍作修改。
+    \begin{equation}\label{qua:007}
+      \frac{ds}{dt}=-\lambda sl
+    \end{equation}
+考察潜伏期的人口变化，每天从健康人群转为潜伏期的人数仍为\textit{$N\lambda sl$}。从潜伏期到轻症患者，每天有\textit{$N\beta l$}。
+    \begin{equation}\label{qua:008}
+      \frac{dl}{dt}=\lambda sl-\beta l
+    \end{equation}
+考察轻症患者的变化，轻症向重症的转换人数为\textit{$Ni(1-\alpha)\gamma $}。治愈的人数为\textit{$\mu i(1-\alpha) $}。
+    \begin{equation}\label{qua:009}
+        \frac{dm}{dt}=\beta l-i(1-\alpha)\gamma-\mu i(1-\alpha)
+    \end{equation}
+考察重症患者的变化。
+    \begin{equation}\label{qua:010}
+        \frac{dh}{dt}=i(1-\alpha)\gamma-\mu i\alpha
+    \end{equation}
+可以将轻重症合并考虑。降低求解难度。
+    \begin{equation}\label{qua:011}
+        \frac{di}{dt}=\beta l-\mu i
+    \end{equation}
+
+考虑治愈/死亡的人口变化，同模型一相同。
+    \begin{equation}\label{qua:012}
+        \frac{dr}{dt}=\mu i
+    \end{equation}
+结合（6）（7）（8）（11）（12）我们获得一组方程组。\\
+参数满足0<λ<1，0<μ<1，0<α<1，0<β<1，0<γ<1。
+\subsection{模型求解}
+依照实际取数据求解模型。我们选取湖北的数据来进行模型求解。暂且不考虑病情严重程度。这样α、γ变为无关参数。
+\par
+湖北于2020年1月27日，襄阳市限制公共交通后全省基本处于封闭状态。没有人员流动符合模型一假设2\cite{ref3}。
+我们可以选取湖北省1月27日的数据作为模型初始值。分别是累计确诊2714例，累计死亡100例，累计治愈47 例。湖北人口5927万人\cite{ref4}。
+
+\begin{center}
+s(0)=59270000-(2714+100+74)\\l(0)\\i(0)=2714\\r(0)=(100+74)
+\end{center}
+\par
+
+发病多在潜伏期3-7天，取β=1/4\cite{ref2}。
+λ取湖北1月27日至5月2日感染率的平均0.03。μ同理，取0.65。
+求解如下：
+    \begin{figure}[!h]
+        \centering
+        \includegraphics[width=.6\textwidth]{model2}
+        \caption{模型二求解}
+        \label{fig:ana2_flow}
+    \end{figure}
+即使没有严格设定参数，显然出现了令人费解的情况。所有人都被感染明显不合常理。原因之一在于模型二没有考虑人为因素。例如对于发病者的隔离措施。在模型三会继续引入控制传染病的人为因素。但对于新冠病毒我们有了一个相对特定的模型。
+\newpage
+\section{对选题第二问的解答}
+计算病毒传播速率就是确定模型二中的重要参数λ，实际上由于人为的传染病控制，λ是随着时间变化的。
+    \begin{equation}\label{qua:013}
+        \frac{d\lambda}{dt}=\frac{di}{i}
+    \end{equation}
+计算感染率的变化。基于模型一的求解部分所做的理由。仍然以湖北省27号之后的数据为例。结果如下。
+    \begin{figure}[!h]
+        \centering
+        \includegraphics[width=.6\textwidth]{problem2}
+        \caption{感染率}
+        \label{fig:ana2_flow}
+    \end{figure}
+\par
+其中地16天出现激增，是因为2月12日第五版诊疗方案将临床诊断加入确诊病例。\cite{ref5}在后续操作中若使用任何数据组进行分析都会剔除此日极端数据。
+\par
+感染率在整个疫情中式持续走低的，这意味着同样数量的患者，感染健康人的能力越来越低。他反应了人为措施对于疫情传播的控制。但不能说明疫情的严峻程度。
+\par
+对于疫情的严峻程度，我们假设应对疫情的资源是有限的显然更多的感染者意味着更严峻的资源分配情况，所以我们可以用感染者的的变化率$\chi $
+和感染人数的变化来表征疫情的严峻程度。
+    \begin{equation}\label{qua:014}
+        \chi =\frac{di}{dt}
+    \end{equation}
+    \begin{figure}[!h]
+        \centering
+        \includegraphics[width=.6\textwidth]{problem2-1}
+        \caption{疫情总体情况}
+        \label{fig:ana2_flow}
+    \end{figure}
+同样，无视12日的变化。我们可以看到感染人数先增后减，变化率持续走低，感染数最高点位于2月19日。
+\par
+湖北的疫情已经走过较大范围感染的时期，进入下一阶段。我们可以从后人的角度来分析疫情走势。很明显，我们可以把感染人数最大值定义为疫情峰值，数学描述是函数的拐点。为1月27日开始第二十三天，即2月19 日。
+\section{对选题第三问的解答}
+在建立模型一二的过程中。我们已经得出评估疫情本身的发展的两个重要指标感染率$\lambda$和治愈（移除）率$\mu$。并且知道两个参数是在整个疫情中动态变化的。在回答问题二的过程中给出了感染率的变化方程。
+这里给出治愈率的变化方程，在模型一二中作为移除率来考虑。
+    \begin{equation}\label{qua:013}
+        \frac{d\mu}{dt}=\frac{dr}{i}
+    \end{equation}
+\section{对应对新冠肺炎人为措施的分析}
+\subsection{疑似病例与医学检测}
+根据诊疗方案，\cite{ref2}对于通过临床症状和流行病学史综合判断但尚未进行医学检测确证的病例我们称为疑似病例。疑似病例到确诊病例需要通过医学检测。无论PCR或是抗体检测都受制于硬件资源。疑似病例的判别有助于更高效的展开救治工作。我们在病情发展中引入这一状态。
+\par
+我们引入检测能力T与检测率ξ。检测能力就是实时社会能进行的检测数，是关于t的函数。检测率是确诊数量与检测数量的比，这取决于具有疑似中同样症状的疾病患病数量和
+确实患有新冠的患者数量。前者脱离于我们的模型考虑范围，所以我们引入一个关于t的函数来表示。
+    \begin{figure}[!h]
+        \centering
+        \includegraphics[width=.6\textwidth]{ana4_flow}
+        \caption{疫情发展阶段（引入疑似病例）}
+        \label{fig:ana2_flow}
+    \end{figure}
+\subsection{隔离措施}
+隔离分为自发性的自我隔离有流行病学史或感染者的密切接触者与政府对发病患者与疑似患者的强制隔离。隔离措施可以显著的切断传播链条，在抗击非典的战斗中就曾发挥重要作用。
+\par
+隔离措施的引入使得感染率随时间变化。对确诊病例的隔离我们放入整个病情转化过程的治疗阶段考虑，此类隔离能力与第三节提到的医疗资源活性率有关。对于起显著作用的自我隔离，我们引入社会自我隔离指数$\tau $，来表示社会中自我隔离的比例。它是关于时间t的函数，在某些较短的时刻，可以视为常数。
+    \begin{figure}[!h]
+        \centering
+        \includegraphics[width=.6\textwidth]{ana5_flow}
+        \caption{疫情发展阶段（引入隔离措施）}
+        \label{fig:ana2_flow}
+    \end{figure}
+\subsection{医疗资源}
+在疫情发展早期介于新冠病毒传染性强，容易转入危重症等问题。一度造成救治资源的紧张。这是人们始料未及的。
+我们引入治疗资源的概念
+治疗资源包括：
+
+    \begin{enumerate}
+        \item 专业医护力量，包括各学科深度知识和大量实践的专家，有抗击非典检验的医护人员，军队医院、援外医疗队以及核生化反应部队等军队医疗力量。
+        \item 医护力量,受过医学训练的医生和护士，社区医生，支持卫生系统运转的相关人员
+        \item 硬件设备,客观的医院床位ICU，救治中的呼吸机等设备。
+    \end{enumerate}
+人员可以通过尚能运转的人员数量与社群当地总人员数的比来表征。设备数量应当略微高于实时需要的数量，才能有效应对各种突发情况。
+结合三部分我们引入医疗资源的活性率ε。通过每部分与实际需求的比例加权来表征医疗系统的运转效率。
+\subsection{人口流动与空间分布}
+在模型一的假定下，考察的社群是人口固定的。但实际上各个社群之间存在人口流动。
+现实中，中国政府在疫情发生后不久就或依法强制或建议性的减少人员流动，也收到人民群众的积极配合。介于本题优先考虑中国国内的疫情发展，对于此因素只提及，不引入模型。
+
+
+\section{模型三：引入更多因素的新冠SIR模型}
+\subsection{模型假设}
+    \begin{enumerate}
+        \item 所有疑似病例必须做医学检测才能转为确诊。
+        \item 为了在检测资源有限的情况下有效利用，只对疑似患者检测。
+        \item 在发病前不会进行隔离，在发病后患者最终都会被隔离。
+        \item 潜伏期和疑似病例有着同等的传染能力。
+        \item 隔离中人不具有传染性，亦不会被感染。
+        \item 检测成功率是100\%。
+    \end{enumerate}\
+
+
+\subsection{符号说明}
+在模型一，二的基础上
+    \begin{table}[!htbp]
+       \label{tab:002}
+       \centering
+        \begin{tabular}{ccccc}
+            \toprule[1.5pt]
+            符号 & 说明 \\
+            \midrule[1pt]
+             $\lambda $ & 每个患者每天有效接触的人数。亦称感染率。现在它变为关于$\tau $和t的函数。\\
+             $\beta $ & 转变为表示每个人每天从潜伏期转变为疑似的概率。\\
+             $\mu $ & 感染患者每天的治愈/死亡的人数比例。亦称移除率。现在是关于医疗活性值$\epsilon $的函数。\\
+             \\
+             T & 检测能力，每天能检测的人数。\\
+             $\zeta $& 检测出患病的概率。亦称检测率。\\
+             $\tau $ & 社会整体选择自我隔离的比例，关于t的函数。\\
+             $\epsilon $ & 医疗活性值，由三个因素加权获得。关于t的函数。\\
+             S & 隔离中的健康人的比例，关于t的函数。\\
+             L & 潜伏期且在隔离人群占总人口的比例，关于时间t的函数。\\
+             m & 疑似人口占总人口的比例，关于时间t的函数。\\
+             M & 疑似且被隔离的人占总人口的比例，关于时间t的函数。\\
+
+            \bottomrule[1.5pt]
+        \end{tabular}
+    \end{table}
+
+\subsection{模型建立}
+我们现在有
+    \begin{equation}\label{qua:015}
+        s(t)+S(t)+l(t)+L(t)+m(t)+M(t)+r(t)=1
+    \end{equation}
+重新考察健康人群，感染源被分为潜伏期和疑似病例。根据假设4我们仍认为潜伏期和疑似病例每天都能感染$\lambda $个人。每天仍有人选择自我隔离。对于健康人群有：
+    \begin{equation}\label{qua:016}
+        \frac{ds}{dt}=-\lambda s(l+m)-\tau s
+    \end{equation}
+对于隔离这我们认为其已经没有感染风险，将与治愈/死亡人群一并算作移除考虑。
+考察潜伏期的人口变化，潜伏期无法主观认识到是否感染，所以自我隔离的可能性和社会一致。
+    \begin{equation}\label{qua:017}
+        \frac{dl}{dt}=\lambda s(l+m)-\tau l-\beta l
+    \end{equation}
+潜伏期并且隔离的人口变化：
+    \begin{equation}\label{qua:018}
+    \frac{dL}{dt}=\tau l-\beta L
+    \end{equation}
+考察疑似向疑似隔离的转变。隔离疑似患者的能力与医疗活性度ε有关。在活性度100\%时候每天新增的全部患者都能被有效隔离。
+    \begin{equation}\label{qua:019}
+    \frac{dm}{dt}=\beta l-m\epsilon
+    \end{equation}
+考察疑似向确诊的转变。检测是对所有疑似患者的检测。疑似患者包括未患新冠肺炎但显现类似症状的患者，他们没有画在模型的状态流程中。但可以计算每天疑似隔离（客观上染病的患者）向确诊转变的人数Tξ。
+这样，疑似隔离的变化为。
+    \begin{equation}\label{qua:020}
+    \frac{dM}{dt}=m\epsilon+\beta L-T\xi
+    \end{equation}
+确诊患者的人数变化率：
+    \begin{equation}\label{qua:021}
+    \frac{di}{dt}=T\xi-\mu i
+    \end{equation}
+考虑健康人中的隔离人群，所以治愈/死亡或健康隔离人群的人口变化：
+    \begin{equation}\label{qua:022}
+    \frac{dr}{dt}=\mu i+\tau s
+    \end{equation}
+参数满足0<λ<1，0<μ<1，0<β<1，0<ξ<1，0<$\tau$<1。0<ε<1。
+
+\subsection{模型求解}
+依照实际取数据求解模型。我们仍选取湖北的数据来进行模型求解。
+\begin{center}
+s(0)=\\l(0)\\i(0)=2714\\r(0)=
+\end{center}
+求解如下：
+    \begin{figure}[!h]
+        \centering
+        \includegraphics[width=.6\textwidth]{model3}
+        \caption{模型三的求解}
+        \label{fig:ana2_flow}
+    \end{figure}
+\section{对选题第五问的回答}
+选取我国见出口贸易额作为反应问题的侧面。数据来自中华人民共和国海关总署。从2020年开始，全国海关不再单独发布1、2月份的进出口数据。可以看到一二月的贸易总额一度扭转贸易逆差。一二月份的对外贸易必然收疫情影响，而且医疗物资的占比会增加。
+    \begin{figure}[!h]
+        \centering
+        \includegraphics[width=.6\textwidth]{jinchukou}
+        \caption{2019年11月至2020年4月份我国海关进出口数据}
+        \label{fig:ana2_flow}
+    \end{figure}
+    
+\newpage
+\newpage
+\begin{thebibliography}{9}%宽度9
+    \bibitem{ref1}国务院联防联控机制2月28日15时发布会 \\
+    http://www.gov.cn/xinwen/gwylflkjz36/index.htm
+    \bibitem{ref2}关于印发新型冠状病毒肺炎诊疗方案（试行第七版）的通知\\
+    http://www.nhc.gov.cn/yzygj/s7653p/202003/46c9294a7dfe4cef80dc7f5912eb1989.shtml
+    \bibitem{ref3}“除神农架林区外，湖北省内12个地级市、1个自治州、3个省直辖县级市全部'封城'。“\\
+    https://baijiahao.baidu.com/s?id=1656979950269209451\&wfr=spider\&for=pc
+    \bibitem{ref4}湖北-百度百科\\
+    https://baike.baidu.com/item/\%E6\%B9\%96\%E5\%8C\%97/173862?fr=aladdin
+    \bibitem{ref5}截至2月12日24时新型冠状病毒肺炎疫情最新情况\\
+    http://www.nhc.gov.cn/xcs/yqtb/202002/26fb16805f024382bff1de80c918368f.shtml
+
+\end{thebibliography}
+\newpage
+\begin{appendices}
+\section{模型二的求解}
+\begin{lstlisting}[language=python]
+#coding:utf-8
+import numpy as np
+from scipy.integrate import odeint
+import matplotlib.pyplot as plt
+plt.rcParams['font.sans-serif']=['SimHei'] #用来正常显示中文标签
+#HUBEI_POP = 57230000
+i=np.array([])
+
+lamada = 0.03
+miu = 0.4
+beta =0.4
+
+def diff(d_list,t):
+    s,l,i,r = d_list
+    return np.array([-lamada*s*l, lamada*s*l-beta*l, beta*l-miu*i,miu*i])
+t = np.linspace(1,98,97)
+#result = odeint(diff, [57230000-2714,1,2714,50000000],t)
+result = odeint(diff, [0.99,0.003,0.00004,0.000002],t)
+#plt.plot(t, result[:, 0],label=u'健康')  # 输出omega随时变化曲线
+plt.plot(t, i/59270000,label=u'感染人数')
+plt.plot(t, result[:, 1],label=u'潜伏')  # 输出theta随时变化曲线，即方程解
+plt.plot(t, result[:, 2],label=u'发病')  # 输出omega随时变化曲线
+#plt.plot(t, result[:, 3],label=u'治愈')  # 输出theta随时变化曲线，即方程解
+plt.legend()
+plt.show()
+ \end{lstlisting}
+ \section{问题二的求解}
+\begin{lstlisting}[language=python]
+#coding:utf-8
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.integrate import odeint
+plt.rcParams['font.sans-serif']=['SimHei'] #用来正常显示中文标签
+plt.rcParams['axes.unicode_minus']=False #用来正常显示负号
+#从1月27号开始的湖北疫情数据，i累计确诊，d累计死亡，r累计治愈。
+i=np.array([])
+d=np.array([])
+r=np.array([])
+#计算每日新增病例和每日新增治愈/死亡
+daliy_i=i-d-r
+s=d+r
+daliy_s=s
+for j in range(len(s)-1,0,-1):
+    daliy_s[j]=daliy_s[j]-daliy_s[j-1]
+#print(daliy_s)
+
+#治愈率
+ds=[]
+s0=0.054
+for j in range(1,len(i)):
+    ds.append((daliy_s[j])/daliy_i[j])
+t = np.linspace(1, 98, 97)
+#npds =np.array(ds)
+#print(np.mean(npds))
+
+mu=[]
+mu.append(s0)
+for j in range(0,len(ds)):
+    mu.append(mu[j]+ds[j])
+
+#感染率
+dn=[]
+n0=0.03
+dn.append(0)
+print(len(i))
+for j in range(1,len(i)):
+    if(daliy_i[j]==0):
+        dn.append(0)
+    else:
+        dn.append((daliy_i[j]-daliy_i[j-1])/daliy_i[j-1])
+
+lamada=[]
+lamada.append(n0)
+for j in range(0,len(dn)):
+    lamada.append(lamada[j]+dn[j])
+print(len(lamada))
+t = np.linspace(1, 98, 97)
+t2 = np.linspace(1, 97, 96)
+t3= np.linspace(1, 99, 98)
+plt.plot(t, daliy_i/100000,label=u'感染人数/10k')
+plt.plot(t, dn,label=u'感染变化率')
+plt.plot(t3, lamada,label=u'感染率')
+plt.plot(t2, ds,label=u'治愈变化率')
+plt.plot(t2, mu,label=u'感染率')
+plt.legend()
+plt.show()
+
+
+ \end{lstlisting}
+ \section{模型三的求解}
+\begin{lstlisting}[language=python]
+#coding:utf-8
+import numpy as np
+from scipy.integrate import odeint
+import matplotlib.pyplot as plt
+plt.rcParams['font.sans-serif']=['SimHei'] #用来正常显示中文标签
+#HUBEI_POP = 57230000
+i=np.array([])
+
+lamada = 0.03#感染率
+miu = 0.01#治愈/死亡率
+beta =1##转疑似率
+zeta =1#检测率
+tau =0.9#隔离率
+eplision=1#活性度
+T =80000#检测能力
+
+def diff(d_list,t):
+    s,l,L,m,M,i,r = d_list
+    return np.array([-lamada*s*(l+m)-tau*s,lamada*s*(l+m)-tau*l-beta*l,
+                    tau*l-beta*L,beta*l-m*eplision,m*eplision+beta*L-T*zeta,
+                    T*zeta-miu*i,miu*i+tau*s])
+t = np.linspace(1,98,97)
+result = odeint(diff,[0.99,0.003,0,0,0,0.00004,0.000002],t)
+#plt.plot(t, result[:, 0],label=u'健康')
+plt.plot(t, result[:, 1],label=u'健康隔离')
+plt.plot(t, result[:, 2],label=u'潜伏')
+plt.plot(t, result[:, 3],label=u'潜伏隔离')
+#plt.plot(t, result[:, 4],label=u'疑似')
+#plt.plot(t, result[:, 5],label=u'疑似隔离')
+#plt.plot(t, result[:, 6],label=u'确诊')
+#plt.plot(t, result[:, 7],label=u'治愈/死亡')
+plt.plot(t, i/59270000,label=u'感染人数')
+plt.legend()
+plt.show()
+ \end{lstlisting}
+\end{appendices}
+\end{document}
